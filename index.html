@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Form Biodata + Lokasi</title>
+  <style>
+    body { font-family: Arial; background: #e0f2ff; padding: 20px; }
+    form { background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin: auto; }
+    input, textarea, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
+    button { background-color: #007bff; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+  </style>
+</head>
+<body>
+
+  <h2 style="text-align:center;">Formulir Biodata Siswa XII DKV1</h2>
+  <form id="biodataForm">
+    <label>Nama:</label>
+    <input type="text" name="nama" required>
+
+    <label>Jenis Kelamin:</label>
+    <input type="text" name="kelamin" required>
+
+    <label>Alamat Tempat Tinggal:</label>
+    <input type="text" name="alamat" placeholder="Contoh: Jl. Pakutomo/ Dusun Kelompok 01/RW 01, Desa Mojogebang, Kec. Kemlagi, Kab. Mojokerto" required>
+
+    <label>Nama Ayah:</label>
+    <input type="text" name="ayah" required>
+
+    <label>Pekerjaan Ayah:</label>
+    <input type="text" name="pekerjaan_ayah" required>
+
+    <label>Nama Ibu:</label>
+    <input type="text" name="ibu" required>
+
+    <label>Pekerjaan Ibu:</label>
+    <input type="text" name="pekerjaan_ibu" required>
+
+    <label>Jumlah Saudara:</label>
+    <input type="number" name="jumlah_saudara" required>
+
+    <label>Nomor Telepon Orang Tua (aktif):</label>
+    <input type="tel" name="telepon_ortu" required>
+
+    <button type="button" onclick="getLocation()">Ambil Lokasi Saya (pastikan posisi memegang HP dirumah)</button>
+
+    <label>Latitude:</label>
+    <input type="text" name="latitude" id="latitude" readonly />
+
+    <label>Longitude:</label>
+    <input type="text" name="longitude" id="longitude" readonly />
+
+    <label>Link Google Maps:</label>
+    <input type="text" name="mapsLink" id="mapsLink" readonly />
+
+    
+    <button type="submit">Kirim Biodataku</button>
+  </form>
+
+  <script>
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          document.getElementById('latitude').value = lat;
+          document.getElementById('longitude').value = lon;
+          document.getElementById('mapsLink').value = `https://maps.google.com/?q=${lat},${lon}`;
+        }, function(error) {
+          alert('Gagal mengambil lokasi: ' + error.message);
+        });
+      } else {
+        alert("Geolocation tidak didukung browser Anda.");
+      }
+    }
+
+    document.getElementById('biodataForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      fetch('https://script.google.com/macros/s/AKfycbxt-mKdg56qKsSZZYGNn3C8AWUvhohs-Grx9FmhdxF19GBcZJIoBiiAORMiqD4S56OT/exec', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.text())
+      .then(result => {
+        alert("Data berhasil dikirim!");
+        this.reset();
+      })
+      .catch(error => {
+        alert("Terjadi kesalahan saat mengirim data.");
+        console.error(error);
+      });
+    });
+  </script>
+
+</body>
+</html>
